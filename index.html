@@ -20,7 +20,7 @@
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 255, 255, 0.2);
             text-align: center;
-            width: 320px;
+            width: 360px;
         }
         #display {
             width: 100%;
@@ -36,7 +36,7 @@
         }
         .buttons {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 10px;
         }
         button {
@@ -67,7 +67,6 @@
         .equal {
             background: #4caf50;
             color: white;
-            grid-column: span 2;
         }
         .equal:hover {
             background: #388e3c;
@@ -85,30 +84,36 @@
     <div class="calculator">
         <input type="text" id="display" disabled>
         <div class="buttons">
-            <button class="clear" onclick="clearDisplay()">C</button>
+            <!-- First Row -->
             <button onclick="appendToDisplay('7')">7</button>
             <button onclick="appendToDisplay('8')">8</button>
             <button onclick="appendToDisplay('9')">9</button>
-            
+            <button class="operator" onclick="appendToDisplay(':')">:</button>
+            <button class="clear" onclick="clearDisplay()">C</button>
+
+            <!-- Second Row -->
             <button onclick="appendToDisplay('4')">4</button>
             <button onclick="appendToDisplay('5')">5</button>
             <button onclick="appendToDisplay('6')">6</button>
-            <button class="operator" onclick="appendToDisplay('/')">/</button>
+            <button class="operator" onclick="appendToDisplay('*')">X</button>
+            <button class="operator" onclick="appendToDisplay('%')">%</button>
 
-            <button onclick="appendToDisplay('1')">1</button>
-            <button onclick="appendToDisplay('2')">2</button>
+            <!-- Third Row -->
             <button onclick="appendToDisplay('3')">3</button>
-            <button class="operator" onclick="appendToDisplay('*')">*</button>
-
-            <button onclick="appendToDisplay('0')">0</button>
-            <button onclick="appendToDisplay('.')">.</button>
-            <button class="equal" onclick="calculateResult()">=</button>
+            <button onclick="appendToDisplay('2')">2</button>
+            <button onclick="appendToDisplay('1')">1</button>
             <button class="operator" onclick="appendToDisplay('-')">-</button>
-            
-            <button class="operator" onclick="appendToDisplay('+')" style="grid-column: span 4;">+</button>
+            <button class="operator" onclick="calculateSquareRoot()">√</button>
+
+            <!-- Fourth Row -->
+            <button onclick="appendToDisplay('0')">0</button>
+            <button onclick="appendToDisplay('00')">00</button>
+            <button onclick="appendToDisplay('.')">.</button>
+            <button class="operator" onclick="appendToDisplay('+')">+</button>
+            <button class="equal" onclick="calculateResult()">=</button>
         </div>
     </div>
-    
+
     <script>
         function appendToDisplay(value) {
             document.getElementById("display").value += value;
@@ -126,6 +131,16 @@
             }
         }
 
+        function calculateSquareRoot() {
+            let display = document.getElementById("display");
+            let value = parseFloat(display.value);
+            if (value >= 0) {
+                display.value = Math.sqrt(value);
+            } else {
+                display.value = "Error";
+            }
+        }
+
         function deleteLastChar() {
             let display = document.getElementById("display");
             display.value = display.value.slice(0, -1);
@@ -135,7 +150,7 @@
         document.addEventListener("keydown", function(event) {
             const key = event.key;
 
-            if (!isNaN(key) || "+-*/.".includes(key)) {
+            if (!isNaN(key) || "+-*/.%".includes(key)) {
                 appendToDisplay(key);
             } else if (key === "Enter") {
                 calculateResult();
