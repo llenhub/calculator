@@ -1,178 +1,277 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retro Calculator</title>
-    <style>
-        :root { 
-            --version: "1.5"; 
-        }
-        body { 
-            font-family: 'Courier New', monospace; 
-            display: flex; 
-            height: 100vh; 
-            background-color: #b0c4de; 
-            overflow: hidden;
-        } 
-        .history-panel {
-            width: 200px;
-            background: #f5f5f5;
-            border-right: 4px solid #aaa;
-            padding: 10px;
-            overflow-x: auto;
-            overflow-y: hidden;
-            white-space: nowrap;
-        }
-        .history-entry {
-            font-size: 14px;
-            padding: 5px 0;
-        }
-        .combo {
-            font-size: 16px;
-            font-weight: bold;
-            color: red;
-            margin-top: 10px;
-        }
-        .calculator { 
-            background: #d3d3d3; 
-            padding: 10px; 
-            border: 4px solid #aaa; 
-            box-shadow: inset -3px -3px 5px rgba(0, 0, 0, 0.2), inset 3px 3px 5px rgba(255, 255, 255, 0.4); 
-            width: 270px; 
-            text-align: center; 
-        } 
-        .display { 
-            width: 90%; 
-            height: 40px; 
-            padding: 10px; 
-            font-size: 24px; 
-            font-weight: bold; 
-            text-align: right; 
-            background: #e0e0e0; 
-            border: inset 3px #aaa; 
-            color: #222; 
-            font-family: 'Courier New', monospace; 
-            margin-bottom: 10px; 
-            overflow: hidden; 
-            white-space: nowrap; 
-        } 
-        .buttons { 
-            display: grid; 
-            grid-template-columns: repeat(5, 1fr); 
-            gap: 5px; 
-        } 
-        button { 
-            padding: 10px; 
-            font-size: 18px; 
-            font-weight: bold; 
-            border: 2px solid #aaa; 
-            cursor: pointer; 
-        }
-    </style> 
-</head> 
-<body> 
-    <div class="history-panel" id="history-panel"></div>
-    <div class="calculator"> 
-        <input type="text" id="display" class="display" disabled> 
-        <div class="buttons"> 
-            <button onclick="clearDisplay()">CE</button> 
-            <button class="operator" onclick="toggleSign()">±</button> 
-            <button class="operator" onclick="appendToDisplay('%')">%</button> 
-            <button class="operator" onclick="appendToDisplay('/')">/</button> 
-            <button class="operator" onclick="appendToDisplay('*')">X</button> 
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retro Calculator</title>
+  <style>
+    :root {
+      --version: "1.2"; /* Change version here */
+    }
+    /* Page layout wrapper */
+    .page-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      width: 100%;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+    /* Left Combo Container */
+    .combo {
+      width: 150px;
+      margin: 10px;
+      background-color: #f5f5f5;
+      border: 2px solid #aaa;
+      box-shadow: inset -3px -3px 5px rgba(0, 0, 0, 0.2),
+                  inset 3px 3px 5px rgba(255, 255, 255, 0.4);
+      font-family: 'Courier New', monospace;
+      padding: 10px;
+      text-align: center;
+    }
+    /* Calculator (existing styles, unchanged) */
+    body {
+      font-family: 'Courier New', monospace;
+      margin: 0;
+      padding: 0;
+      background-color: #b0c4de;
+    }
+    .calculator {
+      background: #d3d3d3;
+      padding: 10px;
+      border: 4px solid #aaa;
+      box-shadow: inset -3px -3px 5px rgba(0, 0, 0, 0.2),
+                  inset 3px 3px 5px rgba(255, 255, 255, 0.4);
+      width: 270px;
+      text-align: center;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #c0c0c0;
+      padding: 5px;
+      font-size: 12px;
+      border-bottom: 3px solid #aaa;
+    }
+    .header span {
+      font-weight: bold;
+    }
+    .display {
+      width: 90%;
+      height: 40px;
+      padding: 10px;
+      font-size: 24px;
+      font-weight: bold;
+      text-align: right;
+      background: #e0e0e0;
+      border: inset 3px #aaa;
+      color: #222;
+      font-family: 'Courier New', monospace;
+      margin-bottom: 10px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px;
+    }
+    button {
+      padding: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      border: 2px solid #aaa;
+      background: linear-gradient(to bottom, #f8f8f8, #dcdcdc);
+      box-shadow: inset -2px -2px 3px rgba(0, 0, 0, 0.2),
+                  inset 2px 2px 3px rgba(255, 255, 255, 0.4);
+      cursor: pointer;
+      border-radius: 3px;
+    }
+    button:hover {
+      background: #e0e0e0;
+    }
+    .operator {
+      background: linear-gradient(to bottom, #ffd700, #daa520);
+    }
+    .operator:hover {
+      background: #ffc107;
+    }
+    .equal {
+      background: linear-gradient(to bottom, #32cd32, #228b22);
+      color: white;
+    }
+    .equal:hover {
+      background: #2e8b57;
+    }
+    .clear {
+      background: linear-gradient(to bottom, #ff6347, #c00);
+      color: white;
+    }
+    .clear:hover {
+      background: #ff4500;
+    }
+    .version-text {
+      font-size: 12px;
+      color: #555;
+      text-align: center;
+      margin-top: 5px;
+    }
+    /* Right History Container */
+    .history {
+      width: 150px;
+      margin: 10px;
+      background-color: #f5f5f5;
+      border: 2px solid #aaa;
+      box-shadow: inset -3px -3px 5px rgba(0, 0, 0, 0.2),
+                  inset 3px 3px 5px rgba(255, 255, 255, 0.4);
+      font-family: 'Courier New', monospace;
+      padding: 10px;
+      overflow-y: auto;
+      max-height: 90vh;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <!-- Left Combo Section -->
+    <div class="combo" id="combo">COMBO: 0</div>
 
-            <button onclick="appendToDisplay('7')">7</button> 
-            <button onclick="appendToDisplay('8')">8</button> 
-            <button onclick="appendToDisplay('9')">9</button> 
-            <button class="operator" onclick="appendToDisplay('-')">-</button> 
-            <button class="operator" onclick="appendToDisplay('+')">+</button> 
+    <!-- Middle Calculator Section -->
+    <div class="calculator">
+      <div class="header">
+        <span>CALCULATOR</span>
+        <span>[ - ] [ + ]</span>
+      </div>
+      <input type="text" id="display" class="display" disabled>
+      <div class="buttons">
+        <button onclick="deleteAll()">←</button>
+        <button class="clear" onclick="clearDisplay()">CE</button>
+        <button class="clear" onclick="clearDisplay()">C</button>
+        <button class="operator" onclick="toggleSign()">±</button>
+        <button class="operator" onclick="appendToDisplay('%')">%</button>
 
-            <button onclick="appendToDisplay('4')">4</button> 
-            <button onclick="appendToDisplay('5')">5</button> 
-            <button onclick="appendToDisplay('6')">6</button> 
-            <button onclick="calculateResult()">=</button> 
+        <button onclick="appendToDisplay('7')">7</button>
+        <button onclick="appendToDisplay('8')">8</button>
+        <button onclick="appendToDisplay('9')">9</button>
+        <button class="operator" onclick="appendToDisplay('/')">/</button>
+        <button class="operator" onclick="appendToDisplay('(')">(</button>
 
-            <button onclick="appendToDisplay('1')">1</button> 
-            <button onclick="appendToDisplay('2')">2</button> 
-            <button onclick="appendToDisplay('3')">3</button> 
-            <button onclick="appendToDisplay('0')">0</button> 
-            <button onclick="appendToDisplay('.')">.</button> 
-        </div> 
-        <div class="combo" id="combo">Combo: 0</div>
-    </div> 
- 
-    <script> 
-        let comboCount = 0;
-        let comboTimer;
-        let expression = "";
+        <button onclick="appendToDisplay('4')">4</button>
+        <button onclick="appendToDisplay('5')">5</button>
+        <button onclick="appendToDisplay('6')">6</button>
+        <button class="operator" onclick="appendToDisplay('*')">X</button>
+        <button class="operator" onclick="appendToDisplay(')')">)</button>
 
-        function appendToDisplay(value) { 
-            expression += value;
-            updateDisplay();
-            updateHistory();
-            increaseCombo();
-        } 
-        
-        function clearDisplay() { 
-            expression = "";
-            updateDisplay();
-        } 
-        
-        function calculateResult() { 
-            try { 
-                let result = eval(expression);
-                expression = result.toString();
-                updateHistory(result);
-            } catch { 
-                expression = "Error";
-            } 
-            updateDisplay();
-        } 
-        
-        function toggleSign() {
-            if (expression) {
-                if (expression.startsWith("-")) {
-                    expression = expression.slice(1);
-                } else {
-                    expression = "-" + expression;
-                }
-            }
-            updateDisplay();
+        <button onclick="appendToDisplay('1')">1</button>
+        <button onclick="appendToDisplay('2')">2</button>
+        <button onclick="appendToDisplay('3')">3</button>
+        <button class="operator" onclick="appendToDisplay('-')">-</button>
+        <button class="operator" onclick="appendToDisplay('.')">.</button>
+
+        <button onclick="appendToDisplay('0')">0</button>
+        <button onclick="appendToDisplay('00')">00</button>
+        <button class="equal" onclick="calculateResult()">=</button>
+        <button class="operator" onclick="appendToDisplay('+')">+</button>
+      </div>
+      <div class="version-text">Version <span id="version-text"></span></div>
+    </div>
+
+    <!-- Right History Section -->
+    <div class="history" id="history"></div>
+  </div>
+
+  <script>
+    // Existing version display
+    document.getElementById("version-text").innerText =
+      getComputedStyle(document.documentElement)
+        .getPropertyValue('--version')
+        .replace(/"/g, '');
+
+    // Combo logic
+    let comboCount = 0;
+    let lastKeyTime = 0;
+
+    function updateCombo() {
+      let now = Date.now();
+      if (now - lastKeyTime <= 2000) {
+        comboCount++;
+      } else {
+        comboCount = 1;
+      }
+      lastKeyTime = now;
+      document.getElementById("combo").textContent = "COMBO: " + comboCount;
+    }
+
+    // Append value to display
+    function appendToDisplay(value) {
+      document.getElementById("display").value += value;
+      updateCombo();
+    }
+
+    // Clear display
+    function clearDisplay() {
+      document.getElementById("display").value = "";
+    }
+
+    // Calculate result with decimal limiting
+    function calculateResult() {
+      try {
+        let expression = document.getElementById("display").value;
+        let result = eval(expression);
+
+        // Limit floating numbers
+        if (!Number.isInteger(result)) {
+          result = parseFloat(result.toFixed(4));
         }
 
-        function updateDisplay() {
-            let parts = expression.match(/(\d+)([+\-*/%])?(\d*)/);
-            if (parts) {
-                document.getElementById("display").value = parts[1] + (parts[2] || "") + (parts[3] || "");
-            }
-        }
-        
-        function updateHistory(result = "") {
-            let history = document.getElementById("history-panel");
-            let entry = document.createElement("div");
-            entry.classList.add("history-entry");
-            entry.textContent = expression + (result ? " = " + result : "");
-            history.appendChild(entry);
-            history.scrollLeft = history.scrollWidth;
-        }
+        document.getElementById("display").value = result;
+        addHistory(expression + " = " + result);
+      } catch {
+        document.getElementById("display").value = "Error";
+      }
+    }
 
-        function increaseCombo() {
-            comboCount++;
-            document.getElementById("combo").textContent = "Combo: " + comboCount;
-            clearTimeout(comboTimer);
-            comboTimer = setTimeout(() => comboCount = 0, 2000);
-        }
+    // Delete everything (not letter by letter)
+    function deleteAll() {
+      document.getElementById("display").value = "";
+    }
 
-        document.addEventListener("keydown", function(event) { 
-            if (!isNaN(event.key) || "+-*/.%".includes(event.key)) { 
-                appendToDisplay(event.key);
-            } else if (event.key === "Enter") {
-                calculateResult();
-            } else if (event.key === "Backspace") {
-                clearDisplay();
-            }
-        });
-    </script>
+    // Toggle sign ±
+    function toggleSign() {
+      let display = document.getElementById("display");
+      let val = parseFloat(display.value);
+      if (!isNaN(val)) {
+        val = -val;
+        display.value = val;
+      }
+      updateCombo();
+    }
+
+    // History
+    function addHistory(entry) {
+      let historyContainer = document.getElementById("history");
+      let div = document.createElement("div");
+      div.textContent = entry;
+      historyContainer.appendChild(div);
+    }
+
+    // Keyboard support
+    document.addEventListener("keydown", function(event) {
+      const key = event.key;
+      if (!isNaN(key) || "+-*/.%()".includes(key)) {
+        appendToDisplay(key);
+      } else if (key === "Enter") {
+        calculateResult();
+      } else if (key === "Backspace") {
+        // Clears everything
+        deleteAll();
+      } else if (key === "Escape") {
+        clearDisplay();
+      }
+    });
+  </script>
 </body>
 </html>
