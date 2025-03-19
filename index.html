@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculator</title>
+    <title>Dark Calculator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,24 +11,26 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f0f0f0;
+            background-color: #121212;
+            color: white;
         }
         .calculator {
-            background: white;
+            background: #1e1e1e;
             padding: 20px;
             border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.2);
             text-align: center;
-            width: 300px;
+            width: 320px;
         }
         #display {
             width: 100%;
             padding: 15px;
-            font-size: 24px;
+            font-size: 26px;
             text-align: right;
             border: none;
             outline: none;
-            background: #eee;
+            background: #252525;
+            color: cyan;
             border-radius: 8px;
             margin-bottom: 15px;
         }
@@ -38,24 +40,26 @@
             gap: 10px;
         }
         button {
-            padding: 15px;
-            font-size: 20px;
+            padding: 18px;
+            font-size: 22px;
             font-weight: bold;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             transition: 0.2s;
-            background: #ddd;
+            background: #333;
+            color: white;
+            box-shadow: 0 3px 5px rgba(0, 255, 255, 0.3);
         }
         button:hover {
-            background: #bbb;
+            background: #444;
         }
         button:active {
-            background: #999;
+            background: #666;
         }
         .operator {
             background: #ff9800;
-            color: white;
+            color: black;
         }
         .operator:hover {
             background: #e68900;
@@ -104,13 +108,16 @@
             <button class="operator" onclick="appendToDisplay('+')" style="grid-column: span 4;">+</button>
         </div>
     </div>
+    
     <script>
         function appendToDisplay(value) {
             document.getElementById("display").value += value;
         }
+        
         function clearDisplay() {
             document.getElementById("display").value = "";
         }
+
         function calculateResult() {
             try {
                 document.getElementById("display").value = eval(document.getElementById("display").value);
@@ -118,6 +125,26 @@
                 document.getElementById("display").value = "Error";
             }
         }
+
+        function deleteLastChar() {
+            let display = document.getElementById("display");
+            display.value = display.value.slice(0, -1);
+        }
+
+        // KEYBOARD SUPPORT
+        document.addEventListener("keydown", function(event) {
+            const key = event.key;
+
+            if (!isNaN(key) || "+-*/.".includes(key)) {
+                appendToDisplay(key);
+            } else if (key === "Enter") {
+                calculateResult();
+            } else if (key === "Backspace") {
+                deleteLastChar();
+            } else if (key === "Escape") {
+                clearDisplay();
+            }
+        });
     </script>
 </body>
 </html>
